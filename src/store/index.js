@@ -1,9 +1,10 @@
 import {BehaviorSubject, map} from "rxjs";
 
 
-const pokemon$ = new BehaviorSubject([])
+const pokemonRaw$ = new BehaviorSubject([])
+const selected$ = new BehaviorSubject([])
 
-const pokemonWithPower$ = pokemon$.pipe(
+const pokemonWithPower$ = pokemonRaw$.pipe(
     map(pokemon => {
             return pokemon.map(p => {
                 return {
@@ -18,9 +19,9 @@ const pokemonWithPower$ = pokemon$.pipe(
 fetch('/pokemon.json')
     .then(res => res.json())
     .then(data => {
-        console.log(data)
-        return pokemon$.next(data)
+        return pokemonRaw$.next(data)
     })
 
 
-export {pokemon$,pokemonWithPower$}
+
+export {pokemonRaw$, pokemonWithPower$, selected$}
