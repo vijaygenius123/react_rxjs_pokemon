@@ -1,6 +1,6 @@
 import {useEffect, useState, useMemo} from "react";
 import './App.css';
-import {pokemonWithPower$, selected$} from "./store";
+import {pokemon$, selected$} from "./store";
 
 
 const Search = () => {
@@ -8,22 +8,22 @@ const Search = () => {
     const [pokemon, setPokemon] = useState([])
 
     useEffect(() => {
-        const sub = pokemonWithPower$.subscribe(setPokemon)
-        return sub.unsubscribe()
+        const sub = pokemon$.subscribe(setPokemon)
+        return () => sub.unsubscribe()
     }, [])
 
     const filteredPokemon = useMemo(() => {
         return pokemon.filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
     }, [pokemon, search])
 
-    selected$.subscribe(console.log)
     return (
         <div>
             <input type="text" value={search} onChange={e => setSearch(e.target.value)}/>
             <div>
                 {filteredPokemon.map(p => <div key={p.id}>
                     <input type="checkbox"
-                           checked={selected$.value.includes(p.id)}
+                           checked={p.selected}
+                            id={p.id}
                            onChange={() => {
                                if (selected$.value.includes(p.id)) {
                                    selected$.next(selected$.value.filter(id => id !== p.id))
@@ -32,7 +32,7 @@ const Search = () => {
                                }
                            }}
                     />
-                    <strong>{p.name}</strong> - {p.power}
+                    <label htmlFor={p.id}><strong>{p.name}</strong> - {p.power}</label>
                 </div>)}
             </div>
         </div>
@@ -42,7 +42,7 @@ const Search = () => {
 function App() {
     const [pokemons, setPokemons] = useState([])
     useEffect(() => {
-        const sub = pokemonWithPower$.subscribe(setPokemons)
+        const sub = pokemon$.subscribe(setPokemons)
 
         return () => sub.unsubscribe();
     }, [])

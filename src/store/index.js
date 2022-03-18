@@ -1,20 +1,29 @@
-import {BehaviorSubject, map} from "rxjs";
+import {BehaviorSubject, map, combineLatestWith} from "rxjs";
 
 
 const pokemonRaw$ = new BehaviorSubject([])
-const selected$ = new BehaviorSubject([])
 
 const pokemonWithPower$ = pokemonRaw$.pipe(
-    map(pokemon => {
-            return pokemon.map(p => {
-                return {
-                    ...p,
-                    power: p.hp + p.attack + p.defense + p.special_attack + p.special_defense + p.speed
-                }
+    map(pokemon => pokemon.map(p => (
+            {
+                ...p,
+                power: p.hp + p.attack + p.defense + p.special_attack + p.special_defense + p.speed
             })
-        }
+        )
     )
 )
+
+const selected$ = new BehaviorSubject([])
+
+const pokemon$ = pokemonWithPower$.pipe(
+    combineLatestWith(selected$),
+    map(([pokemon, selected]) =>
+        pokemon.map(p => ({
+                ...p,
+                selected: selected.includes(p.id)
+            })
+        )
+    ))
 
 fetch('/pokemon.json')
     .then(res => res.json())
@@ -23,5 +32,4 @@ fetch('/pokemon.json')
     })
 
 
-
-export {pokemonRaw$, pokemonWithPower$, selected$}
+export {pokemonRaw$, pokemonWithPower$, selected$, pokemon$}
