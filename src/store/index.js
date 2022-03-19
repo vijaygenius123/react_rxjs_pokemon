@@ -25,6 +25,10 @@ const pokemon$ = pokemonWithPower$.pipe(
         )
     ))
 
+const deck$ = pokemon$.pipe(
+    map(pokemon => pokemon.filter(p => p.selected))
+)
+
 fetch('/pokemon.json')
     .then(res => res.json())
     .then(data => {
@@ -32,4 +36,5 @@ fetch('/pokemon.json')
     })
 
 
-export {pokemonRaw$, pokemonWithPower$, selected$, pokemon$}
+
+export {selected$, pokemon$, deck$}

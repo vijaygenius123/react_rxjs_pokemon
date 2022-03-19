@@ -6,3 +6,9 @@ input{
 input[type="text"]{
   width: 100%;
 }
+
+
+.flex {
+  display: flex;
+  align-items: center;
+}

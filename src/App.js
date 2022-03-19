@@ -1,7 +1,26 @@
 import {useEffect, useState, useMemo} from "react";
+import {deck$, pokemon$, selected$} from "./store";
+import {useObservableState} from "observable-hooks";
 import './App.css';
-import {pokemon$, selected$} from "./store";
 
+const Deck = () => {
+    const deck = useObservableState(deck$, [])
+
+    return (
+        <div>
+            <h4>Deck</h4>
+            {deck.map(p => (
+                <div key={p.id} className="flex">
+                    <img src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png`}
+                    />
+                    <div>
+                        <div>{p.name}</div>
+                    </div>
+                </div>
+            ))}
+    </div>
+    )
+}
 
 const Search = () => {
     const [search, setSearch] = useState('')
@@ -23,7 +42,7 @@ const Search = () => {
                 {filteredPokemon.map(p => <div key={p.id}>
                     <input type="checkbox"
                            checked={p.selected}
-                            id={p.id}
+                           id={p.id}
                            onChange={() => {
                                if (selected$.value.includes(p.id)) {
                                    selected$.next(selected$.value.filter(id => id !== p.id))
@@ -49,9 +68,7 @@ function App() {
     return (
         <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr'}}>
             <Search/>
-            <ul>
-                {pokemons.map(pokemon => <li key={pokemon.id}>{pokemon.name}</li>)}
-            </ul>
+            <Deck/>
         </div>
     );
 }
